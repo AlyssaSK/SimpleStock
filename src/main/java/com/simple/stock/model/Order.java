@@ -10,7 +10,7 @@ public final class Order implements Map.Entry<Customer, Operation>{
     private Operation operation;
     private boolean approved;
 
-    public Order(Customer customer, OperationType operationType, ShareType shareType, int price, int count) {
+    Order(Customer customer, OperationType operationType, ShareType shareType, int price, int count) {
         this.customer = customer;
         this.operation = new Operation(operationType, shareType, price, count);
     }
@@ -26,7 +26,7 @@ public final class Order implements Map.Entry<Customer, Operation>{
         return approved;
     }
 
-    public Order(String clientName, String symbolOperation, String shareName, int price, int count) {
+    private Order(String clientName, String symbolOperation, String shareName, int price, int count) {
         this.customer = new Customer(clientName);
         this.operation = new Operation(symbolOperation, shareName, price, count);
     }
@@ -80,8 +80,8 @@ public final class Order implements Map.Entry<Customer, Operation>{
 
         Order order = (Order) o;
 
-        if (approved != order.approved) return false;
-        return (customer != null ? customer.equals(order.customer) : order.customer == null)
+        return approved == order.approved
+                && (customer != null ? customer.equals(order.customer) : order.customer == null)
                 && (operation != null ? operation.equals(order.operation) : order.operation == null);
     }
 
