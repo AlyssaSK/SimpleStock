@@ -39,10 +39,6 @@ public class OrderServiceTest {
         assertFalse( orderMap.get(OperationType.SELL).contains(expBuy1) );
     }
 
-    /*
-
-*/
-    private String[] strings = new String[4];
     private Map<Customer, Account> accounts;
     private Map<Customer, Account> accountsExpected;
 
@@ -53,16 +49,20 @@ public class OrderServiceTest {
         setExpectedCustomerAccountMap();
 
         Stream<String> stringStream =
-                Stream.of(  "C1\ts\tC\t15\t5", // Обработается C1 +75$ -5C
-                            "C2\tb\tC\t15\t5", // Обработается C2 -75$ +5C
-                            "C2\ts\tC\t13\t2",
-                            "C4\tb\tD\t5\t4",
-                            "C4\ts\tD\t3\t2");
+                Stream.of(  "C4\ts\tD\t15\t4",  // false: Нет соответствующей заявки на покупку
+                            "C1\ts\tC\t15\t5",  // true : Обработается C1 +75$ -5C
+                            "C2\tb\tC\t15\t5",  // true : Обработается C2 -75$ +5C
+                            "C4\tb\tC\t15\t5",  // false: Новая заявка на покупку акций,
+                                                // предложение к этому времени уже должно быть закрыто
+                            "C4\ts\tC\t15\t5",  // false: Продажа самому себе
+                            "C1\ts\tC\t15\t4",  // false: Предложение на продажу тех же акций, но в другом количестве
+                            "C2\ts\tC\t14\t5",  // false: Предложение на продажу тех же акций, но по другой цене
+                            "C1\ts\tD\t15\t5"); // false: Предложение на продажу другого вида акций
         orders = OrderService.getOrderMap(stringStream);
     }
 
     private void setCustomerAccountMap() {
-        this.accounts = new HashMap<Customer, Account>();
+        this.accounts = new HashMap<>();
         this.accounts.put( new Customer("C1"), Account.getAccountFromString("C1\t1000\t130\t240\t760\t320"));
         this.accounts.put( new Customer("C2"), Account.getAccountFromString("C2\t4350\t370\t120\t950\t560"));
         this.accounts.put( new Customer("C3"), Account.getAccountFromString("C3\t2760\t0\t0\t0\t0"));
@@ -74,7 +74,7 @@ public class OrderServiceTest {
         // Обработаются две заявки:
         // "C1\ts\tC\t15\t5"
         // "C2\tb\tC\t15\t5"
-        this.accountsExpected = new HashMap<Customer, Account>();
+        this.accountsExpected = new HashMap<>();
         this.accountsExpected.put( new Customer("C1"), Account.getAccountFromString("C1\t1075\t130\t240\t755\t320"));
         this.accountsExpected.put( new Customer("C2"), Account.getAccountFromString("C2\t4275\t370\t120\t955\t560"));
 
