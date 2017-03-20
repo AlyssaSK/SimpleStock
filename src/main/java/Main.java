@@ -17,20 +17,30 @@ import static java.lang.System.out;
 
 public class Main {
     public static void main(String[] args){
-        out.println("Before");
-        Stream<String> clientsStream = FileService.getStream(FileService.CLIENTS_FILE_NAME);
+        /* Получение списка клиентов в виде строк из файла */
+        Stream<String> clientsStream = FileService.getStream( FileService.CLIENTS_FILE_NAME );
+        /* Преобразование потока строк в отображение клиентов и их счетов */
         Map<Client, Account> accountMap = ClientService.getAccounts(clientsStream);
+
+        out.println("Customer list before processing");
         accountMap.values().stream().sorted().forEach( out :: println );
 
-        out.println("After");
-        Stream<String> ordersStream = FileService.getStream(FileService.ORDERS_FILE_NAME);
+        /* Получение списка заявок в виде строк из файла */
+        Stream<String> ordersStream = FileService.getStream( FileService.ORDERS_FILE_NAME );
+        /* Преобразование потока строк списки заявок сгруппированные по типу операций */
         Map<OperationType, List<Order>> operationTypeListMap = OrderService.getOrderMap(ordersStream);
+        /* Обработка заявок. Обновление счетов с учетом исполненных заявок*/
+        OrderService.processOrders(accountMap, operationTypeListMap);
 
-        Map<Client, Account> accountMapNew = OrderService.processOrders(accountMap, operationTypeListMap);
-        accountMapNew.values().stream().sorted().forEach( out :: println );
+        out.println("Customer list after processing");
+        accountMap.values().stream().sorted().forEach( out :: println );
+        /* Запись результата в файл */
+        FileService.writeAccounts(accountMap.values(), FileService.RESULT_FILE_NAME);
 
-        ClientService.writeAccounts(accountMapNew.values(), FileService.RESULT_FILE_NAME);
+        printTestResults();
+    }
 
+    private static void printTestResults() {
         Result result = JUnitCore.runClasses();
 
         for (Failure failure : result.getFailures()) {
