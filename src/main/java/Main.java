@@ -1,8 +1,8 @@
 import com.simple.stock.model.Account;
-import com.simple.stock.model.Client;
+import com.simple.stock.model.Customer;
 import com.simple.stock.model.Order;
 import com.simple.stock.ref.OperationType;
-import com.simple.stock.service.ClientService;
+import com.simple.stock.service.CustomerService;
 import com.simple.stock.service.FileService;
 import com.simple.stock.service.OrderService;
 
@@ -20,7 +20,7 @@ public class Main {
         /* Получение списка клиентов в виде строк из файла */
         Stream<String> clientsStream = FileService.getStream( FileService.CLIENTS_FILE_NAME );
         /* Преобразование потока строк в отображение клиентов и их счетов */
-        Map<Client, Account> accountMap = ClientService.getAccounts(clientsStream);
+        Map<Customer, Account> accountMap = CustomerService.getAccounts(clientsStream);
 
         out.println("Customer list before processing");
         accountMap.values().stream().sorted().forEach( out :: println );
