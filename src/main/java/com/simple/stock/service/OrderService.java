@@ -1,7 +1,7 @@
 package com.simple.stock.service;
 
 import com.simple.stock.model.Account;
-import com.simple.stock.model.Client;
+import com.simple.stock.model.Customer;
 import com.simple.stock.model.Order;
 import com.simple.stock.ref.OperationType;
 
@@ -32,12 +32,12 @@ public class OrderService{
     }
 
     /**
-     * Возвращает обработанное отображение счетов. Каждому Client(ключ) соответствует Account(значение)
+     * Возвращает обработанное отображение счетов. Каждому Customer(ключ) соответствует Account(значение)
      * @param accounts  исходный список счетов
      * @param orders    заявки
      * @return обработанное отображение счетов клиентов
      */
-    public static Map<Client, Account> processOrders(Map<Client, Account> accounts, Map<OperationType, List<Order>> orders){
+    public static Map<Customer, Account> processOrders(Map<Customer, Account> accounts, Map<OperationType, List<Order>> orders){
         List<Order> ordersBuy  = orders.get(OperationType.BUY);
         List<Order> ordersSell = orders.get(OperationType.SELL);
 
