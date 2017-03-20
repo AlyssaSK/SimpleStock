@@ -106,16 +106,12 @@ public class Account implements Comparable<Account>{
 
     @Override
     public String toString() {
-        StringBuilder string = new StringBuilder();
-
-        string.append(customer.getName()).append("\t")
-                .append( this.balanceDollars + "\t" )
-                .append( this.balanceA + "\t" )
-                .append( this.balanceB + "\t" )
-                .append( this.balanceC + "\t" )
-                .append( this.balanceD);
-
-        return string.toString();
+        return customer.getName() + "\t" +
+                    this.balanceDollars + "\t" +
+                    this.balanceA + "\t" +
+                    this.balanceB + "\t" +
+                    this.balanceC + "\t" +
+                    this.balanceD;
     }
 
 
@@ -157,15 +153,15 @@ public class Account implements Comparable<Account>{
             // По логике для одного клиента только один счет, но на случай наличия нескольких счетов в списке,
             // его можно будет отсортировать по балансам в порядке приоритета от долларов до акций вида D.
             if ( this.balanceDollars != o.balanceDollars )
-                return Integer.valueOf( this.balanceDollars ).compareTo( Integer.valueOf( o.balanceDollars ) );
+                return Integer.valueOf( this.balanceDollars ).compareTo(o.balanceDollars);
             if ( this.balanceA != o.balanceA )
-                return Integer.valueOf( this.balanceA ).compareTo( Integer.valueOf( o.balanceA ) );
+                return Integer.valueOf( this.balanceA ).compareTo(o.balanceA);
             if ( this.balanceB != o.balanceB )
-                return Integer.valueOf( this.balanceB ).compareTo( Integer.valueOf( o.balanceB ) );
+                return Integer.valueOf( this.balanceB ).compareTo(o.balanceB);
             if ( this.balanceC != o.balanceC )
-                return Integer.valueOf( this.balanceC ).compareTo( Integer.valueOf( o.balanceC ) );
+                return Integer.valueOf( this.balanceC ).compareTo(o.balanceC);
             if ( this.balanceD != o.balanceD )
-                return Integer.valueOf( this.balanceD ).compareTo( Integer.valueOf( o.balanceD ) );
+                return Integer.valueOf( this.balanceD ).compareTo(o.balanceD);
         }
         return this.customer.compareTo(o.customer);
     }
