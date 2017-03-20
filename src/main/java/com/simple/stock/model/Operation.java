@@ -17,7 +17,7 @@ public final class Operation {
         this.count = count;
     }
 
-    public Operation(OperationType operationType, ShareType shareType, int price, int count) {
+    Operation(OperationType operationType, ShareType shareType, int price, int count) {
         this.operationType = operationType;
         this.shareType = shareType;
         this.price = price;
@@ -41,10 +41,10 @@ public final class Operation {
 
         Operation operation = (Operation) o;
 
-        if (price != operation.price) return false;
-        if (count != operation.count) return false;
-        if (operationType != operation.operationType) return false;
-        return shareType == operation.shareType;
+        return price == operation.price
+                && count == operation.count
+                && operationType == operation.operationType
+                && shareType == operation.shareType;
     }
 
     @Override
