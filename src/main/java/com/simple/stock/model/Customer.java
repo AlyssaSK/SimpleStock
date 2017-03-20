@@ -1,13 +1,13 @@
 package com.simple.stock.model;
 
-public final class Client implements Comparable<Client>{
+public final class Customer implements Comparable<Customer>{
     private final String name;
 
-    public Client() {
+    public Customer() {
         this.name = "";
     }
 
-    public Client(String name) {
+    public Customer(String name) {
         this.name = name;
     }
 
@@ -21,9 +21,9 @@ public final class Client implements Comparable<Client>{
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        Client client = (Client) o;
+        Customer customer = (Customer) o;
 
-        return name.equals(client.name);
+        return name.equals(customer.name);
     }
 
     @Override
@@ -33,11 +33,11 @@ public final class Client implements Comparable<Client>{
 
     @Override
     public String toString() {
-        return "Client{" + "name='" + name +  "\'}";
+        return "Customer{" + "name='" + name +  "\'}";
     }
 
     @Override
-    public int compareTo(Client o) {
+    public int compareTo(Customer o) {
         return this.name.compareTo(o.name);
     }
 }
