@@ -1,36 +1,48 @@
 package com.simple.stock.model;
 
 import com.simple.stock.ref.OperationType;
+import com.simple.stock.ref.ShareType;
 
-import java.util.Map;
+public class Account implements Comparable<Account>{
+    private final Customer customer;
+    private int balanceDollars;
+    private int balanceA;
+    private int balanceB;
+    private int balanceC;
+    private int balanceD;
 
-public class Account implements Map.Entry<Client, Balance>, Comparable<Account>{
-    private final Client client;
-    private Balance balance;
-
-    public Account() {
-        this.client = new Client();
+    Account(String customerName, int balanceDollars, int balanceA, int balanceB, int balanceC, int balanceD) {
+        this.customer = new Customer(customerName);
+        this.balanceDollars = balanceDollars;
+        this.balanceA = balanceA;
+        this.balanceB = balanceB;
+        this.balanceC = balanceC;
+        this.balanceD = balanceD;
     }
 
-    public Account(String clientName, int balanceDollars, int balanceA, int balanceB, int balanceC, int balanceD) {
-        this.client = new Client(clientName);
-        this.balance = new Balance(balanceDollars, balanceA, balanceB, balanceC, balanceD);
+    private Account() {
+        this.customer = new Customer();
+        this.balanceDollars = 0;
+        this.balanceA = 0;
+        this.balanceB = 0;
+        this.balanceC = 0;
+        this.balanceD = 0;
     }
 
     public boolean apply( Order order ){
-        if( client.equals( order.getKey() )){
+        if( customer.equals( order.getKey() )){
             Operation operation = order.getValue();
             OperationType operationType = operation.getOperationType();
             int sum = operation.getPrice() * operation.getCount();
             switch (operationType){
                 case BUY:
-                    balance.subtractionDollar(sum);
-                    balance.additionShare(operation.getShareType(), operation.getCount());
+                    this.balanceDollars -= sum;
+                    additionShare(operation.getShareType(), operation.getCount());
 
                     return true;
                 case SELL:
-                    balance.additionDollar(sum);
-                    balance.subtractionShare(operation.getShareType(), operation.getCount());
+                    this.balanceDollars += sum;
+                    subtractionShare(operation.getShareType(), operation.getCount());
 
                     return true;
                 default:
@@ -38,6 +50,24 @@ public class Account implements Map.Entry<Client, Balance>, Comparable<Account>{
             }
         }
         return false;
+    }
+
+    private void subtractionShare(ShareType shareType, int count ){
+        switch (shareType){
+            case A: this.balanceA -= count; break;
+            case B: this.balanceB -= count; break;
+            case C: this.balanceC -= count; break;
+            case D: this.balanceD -= count; break;
+        }
+    }
+
+    private void additionShare(ShareType shareType, int count){
+        switch (shareType){
+            case A: this.balanceA += count; break;
+            case B: this.balanceB += count; break;
+            case C: this.balanceC += count; break;
+            case D: this.balanceD += count; break;
+        }
     }
 
     /**
@@ -51,59 +81,46 @@ public class Account implements Map.Entry<Client, Balance>, Comparable<Account>{
      *               с разделителем '\t'
      * @return Состояние счета
      */
-    public static Account getAccountFromString(String string){
-        String[] strings = string.split("\t");
-        Account account = null;
-        try{
-            account = new Account(strings[0]
-                    , Integer.valueOf(strings[1])
-                    , Integer.valueOf(strings[2])
-                    , Integer.valueOf(strings[3])
-                    , Integer.valueOf(strings[4])
-                    , Integer.valueOf(strings[5]));
-        } catch (Exception e){
-            e.printStackTrace();
+    public static Account getAccountFromString(String string) throws IllegalArgumentException{
+        if( !string.isEmpty() ) {
+            try {
+                String[] strings =  string.contains("\t") ? string.split("\t") : string.split(" ");
+                if(strings.length == 6){
+                    return new Account(strings[0]
+                            , Integer.valueOf(strings[1])
+                            , Integer.valueOf(strings[2])
+                            , Integer.valueOf(strings[3])
+                            , Integer.valueOf(strings[4])
+                            , Integer.valueOf(strings[5]));
+                }
+            } catch (Exception e) {
+                throw new IllegalArgumentException("Недопустимый формат строки: " + string);
+            }
         }
-
-        return account;
+        return Account.emptyAccount();
     }
-   /*
-    Имя клиента
 
-    Баланс клиента по долларам
-    Баланс клиента по ценной бумаге "A" в штуках
-    Баланс по ценной бумаге "B"
-    Баланс по ценной бумаге "C"
-    Баланс по ценной бумаге "D"  */
+    static Account emptyAccount() {
+        return new Account();
+    }
+
     @Override
     public String toString() {
         StringBuilder string = new StringBuilder();
 
-        string.append( client.getName() + "\t" );
-        string.append( balance.getBalanceDollars() + "\t" );
-        string.append( balance.getBalanceA() + "\t" );
-        string.append( balance.getBalanceB() + "\t" );
-        string.append( balance.getBalanceC() + "\t" );
-        string.append( balance.getBalanceD() );
+        string.append(customer.getName()).append("\t")
+                .append( this.balanceDollars + "\t" )
+                .append( this.balanceA + "\t" )
+                .append( this.balanceB + "\t" )
+                .append( this.balanceC + "\t" )
+                .append( this.balanceD);
 
         return string.toString();
     }
 
-    @Override
-    public Client getKey() {
-        return this.client;
-    }
 
-    @Override
-    public Balance getValue() {
-        return this.balance;
-    }
-
-    @Override
-    public Balance setValue(Balance value) {
-        Balance oldValue = this.balance;
-        this.balance = value;
-        return oldValue;
+    public Customer getCustomer() {
+        return this.customer;
     }
 
     @Override
@@ -113,17 +130,43 @@ public class Account implements Map.Entry<Client, Balance>, Comparable<Account>{
 
         Account account = (Account) o;
 
-        return client.equals(account.client) && balance.equals(account.balance);
+        return (balanceDollars == account.balanceDollars)
+                && (balanceA == account.balanceA)
+                && (balanceB == account.balanceB)
+                && (balanceC == account.balanceC)
+                && (balanceD == account.balanceD)
+                && customer.equals(account.customer);
     }
 
     @Override
     public int hashCode() {
-        return ( 31 * client.hashCode() + balance.hashCode() );
+        int result = customer.hashCode();
+        result = 31 * result + balanceDollars;
+        result = 31 * result + balanceA;
+        result = 31 * result + balanceB;
+        result = 31 * result + balanceC;
+        result = 31 * result + balanceD;
+        return result;
     }
 
     @Override
     public int compareTo(Account o) {
-        if(this.equals(o)) return 0;
-        return this.client.compareTo(o.client);
+        if( this.equals(o) ) return 0;
+        if( this.customer.equals(o.customer) ) {
+            // Этот блок, предположительно не будет использоваться, при построение словаря customer<=>account
+            // По логике для одного клиента только один счет, но на случай наличия нескольких счетов в списке,
+            // его можно будет отсортировать по балансам в порядке приоритета от долларов до акций вида D.
+            if ( this.balanceDollars != o.balanceDollars )
+                return Integer.valueOf( this.balanceDollars ).compareTo( Integer.valueOf( o.balanceDollars ) );
+            if ( this.balanceA != o.balanceA )
+                return Integer.valueOf( this.balanceA ).compareTo( Integer.valueOf( o.balanceA ) );
+            if ( this.balanceB != o.balanceB )
+                return Integer.valueOf( this.balanceB ).compareTo( Integer.valueOf( o.balanceB ) );
+            if ( this.balanceC != o.balanceC )
+                return Integer.valueOf( this.balanceC ).compareTo( Integer.valueOf( o.balanceC ) );
+            if ( this.balanceD != o.balanceD )
+                return Integer.valueOf( this.balanceD ).compareTo( Integer.valueOf( o.balanceD ) );
+        }
+        return this.customer.compareTo(o.customer);
     }
 }
