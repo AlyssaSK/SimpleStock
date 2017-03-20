@@ -1,5 +1,6 @@
 # SimpleStock
 Тестовое задание.
+
 Для запуска: 
 * `git clone https://github.com/AlyssaSK/SimpleStock.git`
 * `mvn install` - эта команда запустит приложение.
