@@ -5,18 +5,21 @@ import com.simple.stock.ref.ShareType;
 
 import java.util.Map;
 
-public final class Order implements Map.Entry<Client, Operation>{
-    private final Client client;
+public final class Order implements Map.Entry<Customer, Operation>{
+    private final Customer customer;
     private Operation operation;
     private boolean approved;
 
-    public Order(Client client, OperationType operationType, ShareType shareType, int price, int count) {
-        this.client = client;
+    public Order(Customer customer, OperationType operationType, ShareType shareType, int price, int count) {
+        this.customer = customer;
         this.operation = new Operation(operationType, shareType, price, count);
     }
 
-    public void approve() {
-        this.approved = true;
+    public void approve() throws UnsupportedOperationException{
+        if( !this.approved )
+            this.approved = true;
+        else
+            throw new UnsupportedOperationException("Невозможно одобрить уже одобренную заявку");
     }
 
     public boolean isApproved(){
@@ -24,22 +27,22 @@ public final class Order implements Map.Entry<Client, Operation>{
     }
 
     public Order(String clientName, String symbolOperation, String shareName, int price, int count) {
-        this.client = new Client(clientName);
+        this.customer = new Customer(clientName);
         this.operation = new Operation(symbolOperation, shareName, price, count);
     }
 
     @Override
     public String toString() {
         return "Order{" +
-                "client=" + client +
+                "customer=" + customer +
                 ", operation=" + operation +
                 ", approved=" + approved +
                 '}';
     }
 
     @Override
-    public Client getKey() {
-        return this.client;
+    public Customer getKey() {
+        return this.customer;
     }
 
     @Override
@@ -78,20 +81,20 @@ public final class Order implements Map.Entry<Client, Operation>{
         Order order = (Order) o;
 
         if (approved != order.approved) return false;
-        if (client != null ? !client.equals(order.client) : order.client != null) return false;
-        return operation != null ? operation.equals(order.operation) : order.operation == null;
+        return (customer != null ? customer.equals(order.customer) : order.customer == null)
+                && (operation != null ? operation.equals(order.operation) : order.operation == null);
     }
 
     @Override
     public int hashCode() {
-        int result = client != null ? client.hashCode() : 0;
+        int result = customer != null ? customer.hashCode() : 0;
         result = 31 * result + (operation != null ? operation.hashCode() : 0);
         result = 31 * result + (approved ? 1 : 0);
         return result;
     }
 
     public boolean isCorresponds(Order order ) {
-        boolean isAnotherClient = !this.client.equals(order.client);
+        boolean isAnotherClient = !this.customer.equals(order.customer);
         boolean isOneShare      = this.operation.getShareType().equals( order.operation.getShareType() );
         boolean isOnePrice      = this.operation.getPrice() == order.operation.getPrice();
         boolean isOneCount      = this.operation.getCount() == order.operation.getCount();
