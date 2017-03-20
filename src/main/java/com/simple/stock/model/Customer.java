@@ -11,7 +11,7 @@ public final class Customer implements Comparable<Customer>{
         this.name = name;
     }
 
-    public String getName() {
+    String getName() {
         return name;
     }
 

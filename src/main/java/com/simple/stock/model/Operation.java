@@ -60,15 +60,15 @@ public final class Operation {
         return operationType;
     }
 
-    public ShareType getShareType() {
+    ShareType getShareType() {
         return shareType;
     }
 
-    public int getPrice() {
+    int getPrice() {
         return price;
     }
 
-    public int getCount() {
+    int getCount() {
         return count;
     }
 }
